@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEK KARGO - Xitoydan O'zbekistonga yuk tashish</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+        --primary-blue: #61210F;
+            --primary-orange: #FDF0D5;
+            --light-blue: #3b82f6;
+            --light-orange: #fb923c;
+            --dark-blue: #1e3a8a;
+            --bg-gray: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-gray);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--primary-orange);
+        }
+
+        .lang-switcher {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem;
+            border-radius: 8px;
+        }
+
+        .lang-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            background: transparent;
+            color: var(--white);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .lang-btn.active {
+            background: var(--primary-orange);
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%);
+            color: var(--white);
+            padding: 3rem 1rem;
+            text-align: center;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Services */
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-orange);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .service-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-orange);
+            margin: 1rem 0;
+        }
+
+        .service-details {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Tracking Section */
+        .tracking-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .tracking-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .tracking-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tracking-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .tracking-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-orange {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-orange:hover {
+            background: #ea580c;
+        }
+
+        /* Saved Tracking Codes */
+        .saved-codes {
+            margin-bottom: 1.5rem;
+        }
+
+        .saved-codes h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .saved-codes-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .saved-code-chip {
+            background: var(--bg-gray);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .saved-code-chip:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* Results */
+        .results {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .result-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--white);
+        }
+
+        .result-track {
+            flex: 1;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .copy-btn {
+            background: var(--bg-gray);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .result-info {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: var(--success);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .arrow-icon {
+            font-size: 1.5rem;
+            color: var(--primary-orange);
+        }
+
+        /* Detail View */
+        .detail-view {
+            background: var(--bg-gray);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .detail-view.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .detail-value {
+            color: var(--text-light);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .contact-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-orange);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .contact-details h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-details p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .contact-details a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .contact-details a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+        }
+
+        /* Admin Panel */
+        .admin-login {
+            max-width: 400px;
+            margin: 5rem auto;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .admin-login h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-header {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card h4 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .admin-section {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .admin-section h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-blue);
+            background: var(--bg-gray);
+        }
+
+        .file-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-gray);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .activity-log {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .tracking-input-group {
+                flex-direction: column;
+            }
+
+            .result-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo" onclick="adminClickCounter()" style="cursor: pointer;">
+                JEK <span>KARGO</span>
+            </div>
+            <div class="lang-switcher">
+                <button class="lang-btn active" onclick="switchLang('uz')">O'zbek</button>
+                <button class="lang-btn" onclick="switchLang('ru')">Русский</button>
+                <button class="lang-btn" onclick="switchLang('en')">English</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1 data-i18n="hero-title">Xitoydan O'zbekistonga tez va ishonchli yuk tashish</h1>
+            <p data-i18n="hero-subtitle">Havo va avto yo'llari orqali professional kargo xizmati</p>
+        </div>
+
+        <!-- Services -->
+        <div class="services">
+            <div class="service-card">
+                <div class="service-icon">✈️</div>
+                <h3 data-i18n="avia-title">Avia Kargo</h3>
+                <div class="service-price">$9.5/kg</div>
+                <div class="service-details">
+                    <p><strong data-i18n="delivery-time">Yetkazib berish muddati:</strong> <span data-i18n="avia-time">3-5 kun</span></p>
+                    <p data-i18n="avia-desc">Xitoy omboriga yetib kelgandan keyin tez va xavfsiz havo kargo xizmati</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🚚</div>
+                <h3 data-i18n="avto-title">Avto Kargo</h3>
+                <div class="service-price">$6/kg</div>
+                <div class="service-details">
+                    <p><strong data-i18n="delivery-time">Yetkazib berish muddati:</strong> <span data-i18n="avto-time">14-18 kun</span></p>
+                    <p data-i18n="avto-desc">Katta hajmli yuklar uchun tejamkor yuk tashish yechimi</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracking Section -->
+        <div class="tracking-section">
+            <h2 data-i18n="tracking-title">Yukingizni kuzatish</h2>
+            
+            <!-- Saved Codes -->
+            <div id="savedCodesSection" class="saved-codes hidden">
+                <h4 data-i18n="saved-codes">Saqlangan trek kodlar:</h4>
+                <div id="savedCodesList" class="saved-codes-list"></div>
+            </div>
+
+            <!-- Input -->
+            <div class="tracking-input-group">
+                <input type="text" id="trackingInput" class="tracking-input" 
+                       placeholder="Trek raqamlarini kiriting (vergul bilan ajrating)"
+                       data-i18n-placeholder="tracking-placeholder">
+                <button class="btn btn-primary" onclick="trackCargo()">
+                    <span>🔍</span>
+                    <span data-i18n="track-btn">Qidirish</span>
+                </button>
+            </div>
+
+            <!-- Results -->
+            <div id="trackingResults" class="results"></div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h2 data-i18n="contact-title">Biz bilan bog'laning</h2>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-details">
+                        <h4 data-i18n="phone">Telefon</h4>
+                        <p><a href="tel:+998949480542">+998 94 948 05 42</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <div class="contact-details">
+                        <h4>Telegram</h4>
+                        <p><a href="https://t.me/jekkargo" target="_blank">@jekkargo</a></p>
+                        <p><a href="https://t.me/jek_kargo" target="_blank">@jek_kargo</a></p>
+                        <p><a href="https://t.me/jek_kargobot" target="_blank">@jek_kargobot</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-details">
+                        <h4 data-i18n="office">Namangan ofis</h4>
+                        <p data-i18n="address">Sardoba Biznes Markazi</p>
+                        <p data-i18n="landmark">Mo'ljal - Oqtepa Lavash</p>
+                        <p data-i18n="hours">Ish vaqti: 14:00 - 19:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="adminLogin" class="admin-login hidden">
+        <h2>Admin Panel</h2>
+        <div class="form-group">
+            <label>Parol:</label>
+            <input type="password" id="adminPassword" placeholder="Parolni kiriting" onkeypress="if(event.key==='Enter') adminAuth()">
+        </div>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="adminAuth()">Kirish</button>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel container">
+        <div class="admin-header">
+            <h2>Admin Panel</h2>
+            <button class="btn btn-orange" onclick="logout()">Chiqish</button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Jami tashriflar</h4>
+                <div class="stat-value" id="totalVisits">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Qidirilgan kodlar</h4>
+                <div class="stat-value" id="totalSearches">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Yuklangan fayllar</h4>
+                <div class="stat-value" id="uploadedFiles">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Jami trek kodlar</h4>
+                <div class="stat-value" id="totalCodes">0</div>
+            </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="admin-section">
+            <h3>Excel Fayl Yuklash</h3>
+            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                <p>📁 Bosing yoki faylni torting</p>
+                <p style="font-size: 0.9rem; color: var(--text-light);">Format: "Avia 24.xlsx" yoki "Avto 29.xlsx"</p>
+            </div>
+            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" onchange="uploadFile(event)">
+            <div id="fileList" class="file-list"></div>
+        </div>
+
+        <!-- Settings -->
+        <div class="admin-section">
+            <h3>Sozlamalar</h3>
+            <div class="settings-form">
+                <div class="form-group">
+                    <label>Dollar kursi (so'm):</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="number" id="dollarRate" value="12200">
+                        <button class="btn btn-primary" onclick="saveSetting('dollarRate')">Saqlash</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Avia narxi ($/kg):</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="number" step="0.1" id="aviaPrice" value="9.5">
+                        <button class="btn btn-primary" onclick="saveSetting('aviaPrice')">Saqlash</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Avto narxi ($/kg):</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="number" step="0.1" id="avtoPrice" value="6">
+                        <button class="btn btn-primary" onclick="saveSetting('avtoPrice')">Saqlash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="admin-section">
+            <h3>Faoliyat jurnali</h3>
+            <div id="activityLog" class="activity-log"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 JEK KARGO. <span data-i18n="footer">Barcha huquqlar himoyalangan</span></p>
+    </footer>
+
+    <script>
+        // Translations
+        const translations = {
+            uz: {
+                'hero-title': 'Xitoydan O\'zbekistonga tez va ishonchli yuk tashish',
+                'hero-subtitle': 'Havo va avto yo\'llari orqali professional kargo xizmati',
+                'avia-title': 'Avia Kargo',
+                'avto-title': 'Avto Kargo',
+                'delivery-time': 'Yetkazib berish muddati:',
+                'avia-time': '3-5 kun',
+                'avto-time': '14-18 kun',
+                'avia-desc': 'Xitoy omboriga yetib kelgandan keyin tez va xavfsiz havo kargo xizmati',
+                'avto-desc': 'Katta hajmli yuklar uchun tejamkor yuk tashish yechimi',
+                'tracking-title': 'Yukingizni kuzatish',
+                'saved-codes': 'Saqlangan trek kodlar:',
+                'tracking-placeholder': 'Trek raqamlarini kiriting (vergul bilan ajrating)',
+                'track-btn': 'Qidirish',
+                'contact-title': 'Biz bilan bog\'laning',
+                'phone': 'Telefon',
+                'office': 'Namangan ofis',
+                'address': 'Sardoba Biznes Markazi',
+                'landmark': 'Mo\'ljal - Oqtepa Lavash',
+                'hours': 'Ish vaqti: 14:00 - 19:00',
+                'footer': 'Barcha huquqlar himoyalangan',
+                'track-num': 'Trek raqam:',
+                'arrival-date': 'Xitoy omborga yetib kelgan sana:',
+                'flight': 'Reys:',
+                'weight': 'Og\'irligi (kg):',
+                'delivery-cost': 'Yetkazib berish narxi:',
+                'est-delivery': 'Taxminiy yetib kelish sanasi:',
+                'status': 'Xitoy chegara punkti'
+            },
+            ru: {
+                'hero-title': 'Быстрая и надежная доставка грузов из Китая в Узбекистан',
+                'hero-subtitle': 'Профессиональные карго-услуги авиа и авто доставкой',
+                'avia-title': 'Авиа Карго',
+                'avto-title': 'Авто Карго',
+                'delivery-time': 'Срок доставки:',
+                'avia-time': '3-5 дней',
+                'avto-time': '14-18 дней',
+                'avia-desc': 'Быстрый и безопасный авиа карго сервис после прибытия на склад в Китае',
+                'avto-desc': 'Экономичное решение для крупногабаритных грузов',
+                'tracking-title': 'Отслеживание груза',
+                'saved-codes': 'Сохраненные трек-коды:',
+                'tracking-placeholder': 'Введите трек-номера (через запятую)',
+'track-btn': 'Поиск',
+'contact-title': 'Свяжитесь с нами',
+'phone': 'Телефон',
+'office': 'Офис Наманган',
+'address': 'Сардоба Бизнес Центр',
+'landmark': 'Ориентир - Октепа Лаваш',
+'hours': 'Рабочее время: 14:00 - 19:00',
+'footer': 'Все права защищены',
+'track-num': 'Трек-номер:',
+'arrival-date': 'Дата прибытия на склад в Китае:',
+'flight': 'Рейс:',
+'weight': 'Вес (кг):',
+'delivery-cost': 'Стоимость доставки:',
+'est-delivery': 'Ожидаемая дата доставки:',
+'status': 'Китайская граница'
+},
+en: {
+'hero-title': 'Fast and Reliable Cargo Shipping from China to Uzbekistan',
+'hero-subtitle': 'Professional cargo services via air and ground routes',
+'avia-title': 'Air Cargo',
+'avto-title': 'Ground Cargo',
+'delivery-time': 'Delivery time:',
+'avia-time': '3-5 days',
+'avto-time': '14-18 days',
+'avia-desc': 'Fast and secure air cargo service after arrival at China warehouse',
+'avto-desc': 'Economical shipping solution for large volume cargo',
+'tracking-title': 'Track Your Cargo',
+'saved-codes': 'Saved tracking codes:',
+'tracking-placeholder': 'Enter tracking numbers (comma separated)',
+'track-btn': 'Search',
+'contact-title': 'Contact Us',
+'phone': 'Phone',
+'office': 'Namangan Office',
+'address': 'Sardoba Business Center',
+'landmark': 'Landmark - Oqtepa Lavash',
+'hours': 'Working hours: 14:00 - 19:00',
+'footer': 'All rights reserved',
+'track-num': 'Tracking number:',
+'arrival-date': 'Arrival date to China warehouse:',
+'flight': 'Flight:',
+'weight': 'Weight (kg):',
+'delivery-cost': 'Delivery cost:',
+'est-delivery': 'Estimated delivery date:',
+'status': 'China border point'
+}
+};
+let currentLang = 'uz';
+    let excelData = [];
+    let settings = {
+        dollarRate: 12200,
+        aviaPrice: 9.5,
+        avtoPrice: 6
+    };
+    let stats = {
+        visits: 0,
+        searches: 0,
+        uploadedFiles: 0,
+        totalCodes: 0
+    };
+    let activityLog = [];
+    let clickCount = 0;
+    let clickTimer = null;
+
+    // Initialize
+    window.onload = function() {
+        loadSettings();
+        loadStats();
+        loadSavedCodes();
+        loadExcelFiles();
+        trackVisit();
+        
+        if (window.location.hash === '#admin') {
+            showAdminLogin();
+        }
+    };
+
+    // Admin click counter for triple-click on logo
+    function adminClickCounter() {
+        clickCount++;
+        
+        if (clickCount === 3) {
+            showAdminLogin();
+            clickCount = 0;
+        }
+        
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+        }, 2000);
+    }
+
+    function loadSettings() {
+        const saved = localStorage.getItem('jekSettings');
+        if (saved) {
+            settings = JSON.parse(saved);
+            const dollarEl = document.getElementById('dollarRate');
+            const aviaEl = document.getElementById('aviaPrice');
+            const avtoEl = document.getElementById('avtoPrice');
+            
+            if (dollarEl) dollarEl.value = settings.dollarRate;
+            if (aviaEl) aviaEl.value = settings.aviaPrice;
+            if (avtoEl) avtoEl.value = settings.avtoPrice;
+        }
+    }
+
+    function loadStats() {
+        const saved = localStorage.getItem('jekStats');
+        if (saved) {
+            stats = JSON.parse(saved);
+        }
+        updateStatsDisplay();
+    }
+
+    function saveStats() {
+        localStorage.setItem('jekStats', JSON.stringify(stats));
+        updateStatsDisplay();
+    }
+
+    function updateStatsDisplay() {
+        const visitEl = document.getElementById('totalVisits');
+        const searchEl = document.getElementById('totalSearches');
+        const filesEl = document.getElementById('uploadedFiles');
+        const codesEl = document.getElementById('totalCodes');
+        
+        if (visitEl) visitEl.textContent = stats.visits;
+        if (searchEl) searchEl.textContent = stats.searches;
+        if (filesEl) filesEl.textContent = stats.uploadedFiles;
+        if (codesEl) codesEl.textContent = stats.totalCodes;
+    }
+
+    function trackVisit() {
+        stats.visits++;
+        saveStats();
+        logActivity('Website visit');
+    }
+
+    function logActivity(message) {
+        const time = new Date().toLocaleTimeString();
+        activityLog.unshift({ time, message });
+        if (activityLog.length > 50) activityLog.pop();
+        
+        const logEl = document.getElementById('activityLog');
+        if (logEl) {
+            logEl.innerHTML = activityLog.map(log => 
+                `<div class="activity-item">
+                    <span class="activity-time">[${log.time}]</span> ${log.message}
+                </div>`
+            ).join('');
+        }
+    }
+
+    function switchLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) {
+                el.textContent = translations[lang][key];
+            }
+        });
+        
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[lang][key]) {
+                el.placeholder = translations[lang][key];
+            }
+        });
+    }
+
+    function loadSavedCodes() {
+        const saved = localStorage.getItem('jekTrackingCodes');
+        if (saved) {
+            const codes = JSON.parse(saved);
+            if (codes.length > 0) {
+                document.getElementById('savedCodesSection').classList.remove('hidden');
+                document.getElementById('savedCodesList').innerHTML = codes.map(code => 
+                    `<div class="saved-code-chip" onclick="searchSavedCode('${code}')">${code}</div>`
+                ).join('');
+            }
+        }
+    }
+
+    function saveTrackingCode(code) {
+        let saved = localStorage.getItem('jekTrackingCodes');
+        let codes = saved ? JSON.parse(saved) : [];
+        if (!codes.includes(code)) {
+            codes.push(code);
+            localStorage.setItem('jekTrackingCodes', JSON.stringify(codes));
+            loadSavedCodes();
+        }
+    }
+
+    function searchSavedCode(code) {
+        document.getElementById('trackingInput').value = code;
+        trackCargo();
+    }
+
+    function trackCargo() {
+        const input = document.getElementById('trackingInput').value.trim();
+        if (!input) {
+            alert(currentLang === 'uz' ? 'Trek raqamini kiriting' : 
+                  currentLang === 'ru' ? 'Введите трек-номер' : 'Enter tracking number');
+            return;
+        }
+
+        const codes = input.split(',').map(c => c.trim()).filter(c => c);
+        const results = [];
+
+        codes.forEach(code => {
+            const found = excelData.find(row => row.trackingCode === code);
+            if (found) {
+                results.push(found);
+                saveTrackingCode(code);
+            }
+        });
+
+        stats.searches++;
+        saveStats();
+        logActivity(`Tracking search: ${codes.join(', ')}`);
+
+        displayResults(results);
+    }
+
+    function displayResults(results) {
+        const container = document.getElementById('trackingResults');
+        
+        if (results.length === 0) {
+            container.innerHTML = `<p style="text-align: center; color: var(--text-light); padding: 2rem;">
+                ${currentLang === 'uz' ? 'Ma\'lumot topilmadi' : 
+                  currentLang === 'ru' ? 'Данные не найдены' : 'No data found'}
+            </p>`;
+            return;
+        }
+
+        container.innerHTML = results.map((item, index) => {
+            const cost = Math.round(item.weight * item.pricePerKg * settings.dollarRate);
+            const formatter = new Intl.NumberFormat('uz-UZ');
+            
+            return `
+                <div class="result-card" onclick="toggleDetail(${index})">
+                    <div class="result-header">
+                        <div class="result-icon">💵</div>
+                        <div class="result-track">${item.trackingCode}</div>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyCode('${item.trackingCode}')">📋</button>
+                    </div>
+                    <div class="result-info">
+                        <div class="info-item">
+                            <span>⚖️</span>
+                            <span>${item.weight} kg</span>
+                        </div>
+                        <div class="info-item">
+                            <span>🚚</span>
+                            <span>${formatter.format(cost)} so'm</span>
+                        </div>
+                        <div class="arrow-icon">→</div>
+                    </div>
+                    <div class="status-badge">${translations[currentLang]['status']}</div>
+                    <div id="detail-${index}" class="detail-view">
+                        ${getDetailView(item, cost)}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function getDetailView(item, cost) {
+        const formatter = new Intl.NumberFormat('uz-UZ');
+        const deliveryRange = calculateDeliveryDate(item.receiptDate, item.type);
+        
+        return `
+            <div class="detail-row">
+                <span class="detail-label">${translations[currentLang]['track-num']}</span>
+                <span class="detail-value">${item.trackingCode}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">${translations[currentLang]['arrival-date']}</span>
+                <span class="detail-value">${item.receiptDate}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">${translations[currentLang]['flight']}</span>
+                <span class="detail-value">${item.flight}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">${translations[currentLang]['weight']}</span>
+                <span class="detail-value">${item.weight} kg</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">${translations[currentLang]['delivery-cost']}</span>
+                <span class="detail-value">${formatter.format(cost)} so'm</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">${translations[currentLang]['est-delivery']}</span>
+                <span class="detail-value">${deliveryRange}</span>
+            </div>
+        `;
+    }
+
+    function calculateDeliveryDate(receiptDate, type) {
+        const date = new Date(receiptDate);
+        const minDays = type === 'Avia' ? 3 : 14;
+        const maxDays = type === 'Avia' ? 5 : 18;
+        
+        const minDate = new Date(date);
+        minDate.setDate(minDate.getDate() + minDays);
+        
+        const maxDate = new Date(date);
+        maxDate.setDate(maxDate.getDate() + maxDays);
+        
+        return `${formatDate(minDate)} - ${formatDate(maxDate)}`;
+    }
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    }
+
+    function toggleDetail(index) {
+        const detail = document.getElementById(`detail-${index}`);
+        detail.classList.toggle('show');
+    }
+
+    function copyCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            alert(currentLang === 'uz' ? 'Kod nusxalandi!' : 
+                  currentLang === 'ru' ? 'Код скопирован!' : 'Code copied!');
+        });
+    }
+
+    function uploadFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+            parseExcelData(jsonData, file.name);
+            
+            stats.uploadedFiles++;
+            saveStats();
+            logActivity(`File uploaded: ${file.name}`);
+            
+            saveExcelFile(file.name, jsonData);
+            loadExcelFiles();
+            
+            alert('Fayl muvaffaqiyatli yuklandi!');
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function parseExcelData(data, filename) {
+        const type = filename.toLowerCase().includes('avia') ? 'Avia' : 'Avto';
+        const flightMatch = filename.match(/\d+/);
+        const flightNum = flightMatch ? flightMatch[0] : '1';
+        const flight = `${type} ${flightNum}`;
+        const pricePerKg = type === 'Avia' ? settings.aviaPrice : settings.avtoPrice;
+
+        for (let i = 1; i < data.length; i++) {
+            const row = data[i];
+            if (row[2]) {
+                excelData.push({
+                    boxCode: row[0],
+                    receiptDate: row[1],
+                    trackingCode: String(row[2]),
+                    productName: row[3],
+                    quantity: row[5],
+                    weight: parseFloat(row[6]) || 0,
+                    customerCode: row[7],
+                    packageNum: row[8],
+                    volume: row[10],
+                    type: type,
+                    flight: flight,
+                    pricePerKg: pricePerKg
+                });
+            }
+        }
+
+        stats.totalCodes = excelData.length;
+        saveStats();
+    }
+
+    function saveExcelFile(filename, data) {
+        let files = localStorage.getItem('jekExcelFiles');
+        files = files ? JSON.parse(files) : [];
+        files.push({
+            filename,
+            uploadDate: new Date().toISOString(),
+            rowCount: data.length - 1
+        });
+        localStorage.setItem('jekExcelFiles', JSON.stringify(files));
+    }
+
+    function loadExcelFiles() {
+        const files = localStorage.getItem('jekExcelFiles');
+        if (!files) return;
+
+        const fileList = JSON.parse(files);
+        const container = document.getElementById('fileList');
+        if (!container) return;
+
+        container.innerHTML = fileList.map(file => `
+            <div class="file-item">
+                <div>
+                    <strong>${file.filename}</strong>
+                    <br>
+                    <small>${new Date(file.uploadDate).toLocaleString()}</small>
+                </div>
+                <div>${file.rowCount} ${currentLang === 'uz' ? 'kod' : currentLang === 'ru' ? 'кодов' : 'codes'}</div>
+            </div>
+        `).join('');
+    }
+
+    function saveSetting(settingName) {
+        const value = parseFloat(document.getElementById(settingName).value);
+        settings[settingName] = value;
+        localStorage.setItem('jekSettings', JSON.stringify(settings));
+        logActivity(`Setting updated: ${settingName} = ${value}`);
+        alert('Sozlamalar saqlandi!');
+        
+        // Update prices in excelData
+        excelData.forEach(item => {
+            if (item.type === 'Avia') {
+                item.pricePerKg = settings.aviaPrice;
+            } else {
+                item.pricePerKg = settings.avtoPrice;
+            }
+        });
+    }
+
+    function showAdminLogin() {
+        document.getElementById('mainContent').classList.add('hidden');
+        document.getElementById('adminLogin').classList.remove('hidden');
+        document.querySelector('footer').classList.add('hidden');
+    }
+
+    function adminAuth() {
+        const password = document.getElementById('adminPassword').value;
+        if (password === 's08121719') {
+            document.getElementById('adminLogin').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('show');
+            document.querySelector('footer').classList.add('hidden');
+            loadExcelFiles();
+            setInterval(updateStatsDisplay, 3000);
+        } else {
+            alert('Noto\'g\'ri parol!');
+        }
+    }
+
+    function logout() {
+        document.getElementById('adminPanel').classList.remove('show');
+        document.getElementById('mainContent').classList.remove('hidden');
+        document.querySelector('footer').classList.remove('hidden');
+        window.location.hash = '';
+    }
+</script>
