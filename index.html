@@ -1281,13 +1281,61 @@ let currentLang = 'uz';
         localStorage.setItem('jekExcelFiles', JSON.stringify(files));
     }
 
+
+
+    function deleteFile(filename) {
+        if (!confirm(currentLang === 'uz' ? 'Bu faylni o\'chirmoqchimisiz? Undagi barcha trek kodlar ham o\'chib ketadi!' :
+                     currentLang === 'ru' ? 'Удалить этот файл? Все трек-коды из него тоже удалятся!' :
+                     'Delete this file? All tracking codes in it will also be deleted!')) {
+            return;
+        }
+
+        let files = JSON.parse(localStorage.getItem('jekExcelFiles')) || [];
+        const fileToDelete = files.find(f => f.filename === filename);
+        if (!fileToDelete) return;
+
+        const type = filename.toLowerCase().includes('avia') ? 'Avia' : 'Avto';
+        const flightMatch = filename.match(/\d+/);
+        const flightNum = flightMatch ? flightMatch[0] : null;
+        const flight = flightNum ? `${type} ${flightNum}` : null;
+
+        files = files.filter(f => f.filename !== filename);
+        localStorage.setItem('jekExcelFiles', JSON.stringify(files));
+
+        if (flight) {
+            const initialLength = excelData.length;
+            excelData = excelData.filter(row => row.flight !== flight);
+            const removed = initialLength - excelData.length;
+
+            stats.totalCodes = excelData.length;
+            stats.uploadedFiles = files.length;
+            saveStats();
+            logActivity(`Fayl o'chirildi: ${filename}, ${removed} ta kod o'chirildi`);
+        } else {
+            stats.uploadedFiles = files.length;
+            saveStats();
+            logActivity(`Fayl o'chirildi (ma'lumot topilmadi): ${filename}`);
+        }
+
+        loadExcelFiles();
+        alert(currentLang === 'uz' ? 'Fayl muvaffaqiyatli o\'chirildi!' :
+              currentLang === 'ru' ? 'Файл успешно удален!' : 'File successfully deleted!');
+    }
+
     function loadExcelFiles() {
         const files = localStorage.getItem('jekExcelFiles');
-        if (!files) return;
-
-        const fileList = JSON.parse(files);
         const container = document.getElementById('fileList');
         if (!container) return;
+
+        if (!files || files === '[]') {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Yuklangan fayllar yo\'q</p>';
+            return;
+        }
+
+        const fileList = JSON.parse(files);
+
+        const codeWord = currentLang === 'uz' ? 'kod' : (currentLang === 'ru' ? 'кодов' : 'codes');
+        const deleteText = currentLang === 'uz' ? 'O\'chirish' : (currentLang === 'ru' ? 'Удалить' : 'Delete');
 
         container.innerHTML = fileList.map(file => `
             <div class="file-item">
@@ -1296,11 +1344,15 @@ let currentLang = 'uz';
                     <br>
                     <small>${new Date(file.uploadDate).toLocaleString()}</small>
                 </div>
-                <div>${file.rowCount} ${currentLang === 'uz' ? 'kod' : currentLang === 'ru' ? 'кодов' : 'codes'}</div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span>${file.rowCount} ${codeWord}</span>
+                    <button class="btn btn-orange" onclick="deleteFile('${file.filename}')">
+                        ${deleteText}
+                    </button>
+                </div>
             </div>
         `).join('');
     }
-
     function saveSetting(settingName) {
         const value = parseFloat(document.getElementById(settingName).value);
         settings[settingName] = value;
